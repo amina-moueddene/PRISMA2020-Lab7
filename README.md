@@ -1,169 +1,230 @@
-# LAB 7 : Construire le diagramme de flux PRISMA 2020
-**Application à ma SLR : ML et télédétection pour la détection des maladies et du stress de l'olivier**
+# Lab 7 — Construire le diagramme de flux PRISMA 2020
 
-> Les nombres viennent de ma SLR (Scopus et Web of Science, recherche du 15/11/2026). Le diagramme correspond à la Figure 2 de l'article.
+**Revue systématique :** *Machine learning and remote sensing for disease and stress detection in olive* (PRISMA 2020)
+**Résultat :** 215 enregistrements identifiés → 72 doublons → 143 examinés → 90 exclus → 53 rapports recherchés → 15 non récupérés → 38 évalués → 15 exclus → **23 rapports, 22 études incluses**
 
-## 1. Nombres d'identification
+![tests](https://github.com/amina-moueddene/PRISMA2020-Lab7/actions/workflows/tests.yml/badge.svg)
 
-| Base | Records identifiés |
+![Diagramme PRISMA 2020](output/08_prisma2020_flow.png)
+
+## En bref
+
+**Technologies.** **Python 3** (bibliothèque standard + openpyxl) et un **classeur Excel avec de vraies formules** (`=SUM`, `=COUNTA`, `=COUNTIF`, `=COUNTIFS`, `=IF`, `=IFERROR`). Le diagramme est écrit en **SVG** et suit la structure du modèle officiel PRISMA 2020. Un fichier CSV est fourni au format du **modèle officiel** (package R PRISMA2020 / application en ligne), prêt à être importé. Le lab ne demande pas de SQL.
+
+**Aucun nombre n'est saisi à la main**, sauf les nombres de départ par base. Tous les autres sont recalculés à partir du tableau de tri de la revue (une ligne par enregistrement unique, avec sa décision), puis contrôlés deux fois : par les formules de l'énoncé et par un comptage indépendant.
+
+**Correspondance étapes → fichiers**
+
+| Étape du lab | Section | Fichiers |
+|---|---|---|
+| 1 Introduction | §1 | `README.md` |
+| 2 Nombres d'identification | §2 | `data/identification.csv`, `output/01_identification.csv`, feuille **Identification** |
+| 3 Records, reports, studies | §3 | `data/rapports_etudes.csv`, `output/02_records_reports_studies.csv`, feuille **Records_Reports_Studies** |
+| 4 Tableau de vérification | §4 | `output/03_verification.csv`, feuille **Vérification** |
+| 5 Après déduplication | §5 | feuille **Vérification** (B4 = B2 − B3) |
+| 6 Screening titre/résumé | §6 | `output/04_exclusions_titre_resume.csv`, feuille **Motifs** |
+| 7 Recherche des textes intégraux | §7 | feuille **Vérification** (B6 = B4 − B5) |
+| 8 Textes non récupérés | §8 | feuille **Tri** (statut « Non récupéré ») |
+| 9 Évaluation de l'éligibilité | §9 | feuille **Vérification** (B8 = B6 − B7) |
+| 10 Exclusions avec motifs | §10 | `output/05_exclusions_texte_integral.csv`, feuille **Exclusions** (=COUNTA) |
+| 11 Nombre final d'études | §11 | `output/06_controles.csv`, feuille **Vérification** (checklist), `scripts/prisma_flow.py` |
+| 12 Diagramme avec l'outil officiel | §12 | `output/07_PRISMA_officiel.csv`, `output/08_prisma2020_flow.svg/.png` (+ version française `_fr`) |
+| 13 Vérification et défis | §13 | `verifications.txt`, feuille **Défis**, `output/10_defi1_corrections.csv`, `output/11_defi2_prisma.png` |
+| 14 Conclusion | §14 | `README.md` |
+
+**Exécuter**
+
+```bash
+pip install -r requirements.txt
+python scripts/prisma_flow.py                   # nombres, contrôles, CSV de l'outil officiel, diagramme SVG
+python scripts/build_workbook.py                # classeur Excel (recalculé par LibreOffice s'il est installé)
+python -m unittest discover -s tests -t . -v    # 18 tests
+```
+
+`prisma_flow.py` s'arrête avec une erreur si un seul contrôle échoue. La conversion SVG → PNG utilise `rsvg-convert` s'il est installé.
+
+**Tests** (18) :
+- `test_flux.py` : chaque nombre de la chaîne et chaque motif ; les 8 contrôles ; la distinction rapports/études ; un contrôle qui doit échouer quand on introduit une erreur ; le CSV de l'outil officiel (valeurs, même structure que le modèle) ; le contenu du SVG ; les 15 exclusions documentées ; les questions et les deux défis ;
+- `test_classeur.py` : les 9 feuilles, la présence des formules de l'énoncé (`=B2-B3`, `=B4-B5`, `=SUM`, `=COUNTA`, `=IFERROR`), les valeurs et contrôles enregistrés, l'exemple de l'énoncé (1000 → 780 → 230 → 220 → 60), les corrections du défi 1.
+
+## Contenu du dépôt
+
+| Fichier | Rôle |
 |---|---|
-| Scopus | 118 |
-| Web of Science Core Collection | 97 |
-| **Total** | **215** |
+| `data/identification.csv` | Enregistrements par base (recherche du 15/11/2026, Lab 3) |
+| `data/Screening_ledger_olive_PRISMA2020.csv` | Tableau de tri de la revue : 143 enregistrements uniques, décision et étape (Labs 5 et 6) |
+| `data/rapports_etudes.csv` | Rapports qui décrivent la même étude |
+| `data/commentaires_texte_integral.csv` | Motif final documenté dans le manuscrit, quand il diffère de la note du tableau de tri |
+| `data/PRISMA_template_officiel.csv` | Modèle CSV de l'outil officiel (package R PRISMA2020, N. R. Haddaway, licence MIT) |
+| `scripts/prisma_flow.py` | Calcul, contrôles, CSV officiel rempli, diagramme SVG/PNG, défis |
+| `scripts/build_workbook.py` | Classeur Excel de vérification |
+| `output/` | Sorties numérotées dans l'ordre du lab (voir le tableau ci-dessus) |
+| `output/09_verification_prisma.xlsx` | Classeur : Identification, Vérification, Records_Reports_Studies, Tri, Exclusions, Liens_rapports_études, Motifs, Exemple_énoncé, Défis |
+| `verifications.txt` | Réponses aux 3 questions et aux 2 défis |
+| `tests/` | 18 tests automatiques |
 
-Formule du tableur : `=SUM(B2:B3)` → 215.
+---
 
-## 2. Distinction entre records, reports et studies
+## 1. Introduction et prérequis
 
-| Notion | Définition | Dans ma SLR |
-|---|---|---|
-| **Record** | Entrée issue d'une base (titre + résumé) | 215 identifiés, 143 après déduplication |
-| **Report** | Document complet associé à un ou plusieurs records | 53 recherchés, 38 évalués, **23 rapports** inclus |
-| **Study** | Unité d'analyse finale | **22 études** incluses |
+Le diagramme PRISMA 2020 montre ce que deviennent les enregistrements à chaque étape de la sélection. Chaque nombre doit pouvoir être retracé jusqu'à sa source, et ce qui sort d'une case doit égaler ce qui entre dans la suivante. Ce lab construit le diagramme de la revue à partir des décisions réelles des Labs 3 à 6, et vérifie toute la chaîne de calcul.
 
-Pourquoi 23 rapports mais 22 études : une étude est décrite dans **deux communications de conférence** du même groupe (mêmes parcelles, même méthode). Les deux rapports ont été **liés et comptés comme une seule étude**. À l'inverse, deux études qui réutilisent les mêmes 24 arbres à des saisons différentes ont été gardées **séparées** (données acquises à des saisons différentes), en signalant qu'elles ne sont pas indépendantes.
+**Choix des nombres.** Le Lab 5 a montré qu'une communication de conférence (Blekos et al., CEUR 2020) avait été fusionnée à tort avec l'article de revue de même titre (144 enregistrements uniques au lieu de 143), et le Lab 6 l'a laissée « en attente ». **À la demande de l'autrice, ce diagramme reprend les chiffres de la SLR telle que rédigée (143 enregistrements)**, dans lesquels la chaîne est cohérente à chaque étape. L'écart est une limite connue : si la référence est réintégrée, il y aura 71 doublons et 144 enregistrements examinés, et un rapport de plus rattaché à l'étude Blekos 2021 ; le nombre d'études restera 22.
 
-## 3. Tableau de vérification
+## 2. Récupération des nombres d'identification
 
-| # | Étape | Nombre | Formule |
-|---|---|---|---|
-| B2 | Records identifiés | 215 | `=SUM(…)` |
-| B3 | Doublons supprimés (70 par DOI, 2 par titre normalisé) | 72 | saisi |
-| B4 | Records évalués sur titre et résumé | **143** | `=B2-B3` |
-| B5 | Records exclus (titre/résumé) | 90 | saisi |
-| B6 | Rapports recherchés | **53** | `=B4-B5` |
-| B7 | Rapports non retrouvés | 15 | saisi |
-| B8 | Rapports évalués en texte intégral | **38** | `=B6-B7` |
-| B9 | Rapports exclus avec motifs | 15 | saisi |
-| B10 | Rapports inclus | **23** | `=B8-B9` |
-| B11 | Études incluses (deux rapports = une étude) | **22** | `=B10-1` |
+| Base | Champ | Date | Enregistrements |
+|---|---|---|---:|
+| Scopus | TITLE-ABS-KEY | 15/11/2026 | 118 |
+| Web of Science Core Collection | TS | 15/11/2026 | 97 |
+| **Total** | | | **215** (=SUM) |
 
-Le dernier calcul (`-1`) correspond à l'unique étude décrite dans deux rapports.
+Ces nombres viennent de la recherche documentée au Lab 3 et des exports bruts du Lab 5. Aucun registre, site web ni recherche de citations n'a été utilisé : les cases correspondantes du modèle officiel valent 0. Les bases IEEE Xplore et ACM DL de l'exemple de l'énoncé n'ont pas été interrogées dans cette revue. Leurs nombres (420, 310, 180, 90) sont repris dans la feuille **Exemple_énoncé** pour vérifier les formules.
 
-## 4. Références après déduplication
+## 3. Records, reports et studies
 
-```
-Records examinés = Records identifiés − Doublons supprimés = 215 − 72 = 143
-```
-Origine des 143 : 71 indexés dans les deux bases, 46 dans Scopus seul, 26 dans Web of Science seul.
+| Étape | Unité | Nombre | Définition |
+|---|---|---:|---|
+| Identification | records | 215 | notices brutes ; un article indexé dans les deux bases compte deux fois |
+| Après déduplication | records | 143 | notices uniques soumises au tri titre/résumé |
+| Recherche du texte intégral | reports | 53 | documents complets recherchés ; ici, 1 notice = 1 rapport |
+| Évaluation de l'éligibilité | reports | 38 | documents complets lus |
+| Inclusion | reports | 23 | documents complets retenus |
+| Inclusion | **studies** | **22** | études distinctes |
 
-## 5. Screening des titres et résumés
+La différence entre rapports et études vient d'un seul cas : **Makhloufi 2022** (IGARSS) et **Kallel 2022** (ACM) décrivent la même étude, avec la même équipe, les mêmes parcelles et la même méthode. Le lien est enregistré dans `data/rapports_etudes.csv`. Dans la feuille **Tri**, chaque enregistrement porte l'identifiant de son étude, et le nombre d'études est compté par une formule qui ne compte qu'une fois chaque étude incluse.
 
-```
-Rapports recherchés = Records examinés − Exclus titre/résumé = 143 − 90 = 53
-```
+## 4. Tableau de vérification
 
-| Code | Motif | Nombre |
-|---|---|---|
-| E2 | Autre culture ou hors sujet | 36 |
-| E3 | Pas de cible maladie ou stress | 17 |
-| E7 | Livre, chapitre ou front matter | 14 |
-| E4 | Pas de capteur aérien ou satellite | 12 |
+Feuille **Vérification** (et `output/03_verification.csv`). Chaque ligne a deux valeurs calculées de façon indépendante :
+- **colonne B** : la formule de l'énoncé (B4 = B2 − B3, etc.) ;
+- **colonne D** : un comptage direct dans la feuille **Tri** (`=COUNTIF` sur le statut de chaque enregistrement).
+
+Puis **colonne F** : `=IFERROR(IF(B=D;"OK";"ERREUR");"ERREUR")`, colorée en vert ou rouge par mise en forme conditionnelle. Une cellule de statut global résume le tout.
+
+| Étape | Nombre | Formule (B) | Contrôle indépendant (D) |
+|---|---:|---|---|
+| Références identifiées | 215 | `=Identification!B4` (SUM) | uniques + doublons |
+| Doublons supprimés | 72 | saisi (journal du Lab 5) | identifiées − uniques |
+| Références examinées | 143 | `=B2-B3` | lignes de Tri |
+| Exclues (titre/résumé) | 90 | COUNTIF sur Tri | somme des motifs |
+| Textes intégraux recherchés | 53 | `=B4-B5` | statuts après le tri titre/résumé |
+| Textes non récupérés | 15 | COUNTIF sur Tri | étape « not retrieved » |
+| Textes intégraux évalués | 38 | `=B6-B7` | étape « Full text » |
+| Exclusions avec motifs | 15 | `=COUNTA` (feuille Exclusions) | COUNTIF sur Tri |
+| Rapports inclus | 23 | `=B8-B9` | COUNTIF sur Tri |
+| Études incluses | 22 | rapports − rapports liés | études distinctes (SUMPRODUCT/COUNTIFS) |
+
+## 5. Calcul des références après déduplication
+
+Doublons supprimés = 72 (70 par DOI, 2 par titre, d'après le journal de déduplication de la SLR).
+**Références examinées = 215 − 72 = 143.** Le contrôle indépendant compte les 143 lignes du tableau de tri.
+
+## 6. Screening des titres et résumés
+
+**90 enregistrements exclus**, chacun avec un seul motif (le premier critère non rempli du protocole) :
+
+| Code | Motif | n |
+|---|---|---:|
+| E2 | Pas l'olivier (autre culture, huile, pollen…) | 36 |
+| E3 | Ni maladie ni stress | 17 |
+| E7 | Livre, chapitre ou présentation d'actes | 14 |
+| E4 | Pas de télédétection aérienne ou satellitaire | 12 |
 | E6 | Revue ou éditorial | 11 |
 | **Total** | | **90** |
 
-## 6. Recherche des textes intégraux
+**Textes intégraux recherchés = 143 − 90 = 53.** La feuille **Motifs** recompte chaque motif par `=COUNTIFS` et vérifie que leur somme vaut 90.
 
-53 rapports recherchés (accès institutionnel ou dépôts ouverts). **15 non retrouvés**, donc :
+## 7. Recherche des textes intégraux
 
-```
-Rapports évalués = 53 − 15 = 38
-```
+Les 53 rapports retenus (inclure ou incertain) ont été recherchés par l'accès institutionnel et dans les dépôts en accès libre (liste et DOI : Lab 6, `09_liste_textes_integraux.csv`).
 
-## 7. Textes non récupérés
+## 8. Gestion des textes non récupérés
 
-Les 15 rapports non retrouvés sont listés dans le Supplementary Material S2 avec leur décision du premier stade : **11 classés « inclure » et 4 « incertain »**. Onze de ces quinze rapports sont des communications de conférence, souvent de groupes déjà présents dans le corpus ; ce type de publication est probablement sous-représenté (limite déclarée). Ils ne reçoivent pas de code d'exclusion : ils sont comptés à part dans le diagramme.
+**15 rapports n'ont pas pu être récupérés.** Comme le prévoit PRISMA 2020, ils ne sont **pas** comptés comme des exclusions pour un critère d'éligibilité : ils ont leur propre case, « Reports not retrieved ». 11 d'entre eux sont des communications de conférence, ce qui est signalé dans les limites de la revue. **Textes intégraux évalués = 53 − 15 = 38.**
 
-## 8. Éligibilité des textes intégraux
+## 9. Évaluation de l'éligibilité des textes intégraux
 
-Chaque rapport évalué reçoit une décision et, en cas d'exclusion, **un seul code** (premier critère non rempli).
+Les 38 textes ont été lus et confrontés aux 8 critères du protocole. Résultat : 23 inclus, 15 exclus. **Rapports inclus = 38 − 15 = 23.**
 
-```
-Rapports inclus = Rapports évalués − Exclusions = 38 − 15 = 23 rapports (22 études)
-```
+## 10. Documentation des exclusions avec motifs
 
-## 9. Exclusions avec motifs (texte intégral)
+Feuille **Exclusions** et `output/05_exclusions_texte_integral.csv` : une ligne par rapport exclu, avec le DOI, le code, le motif et un commentaire. `=COUNTA` en bas de la feuille donne 15, qui est comparé à la ligne « Exclusions avec motifs » du tableau de vérification.
 
-| Code | Motif | Nombre | Études exclues |
-|---|---|---|---|
-| E4 | Pas d'imagerie aérienne ou satellite | 5 | Beyaz et Ozkaya ; Alrashdi et Abozeid ; Bruno et al. ; Estrada et al. ; Abu-Hammour et al. |
-| E5 | Pas de modèle d'apprentissage | 5 | Panagiotopoulou et al. ; Telesca et al. ; Telesca et Lasaponara ; Quille-Mamani et al. ; Navrozidis et al. (2020) |
-| E3 | Pas de cible maladie ou stress | 5 | Cilli et al. ; Alfonso et al. ; Vasilakos et Verykios ; Kalo et al. ; Majikumna et al. |
-| | **Total** | **15** | |
+| Code | n | Exemples |
+|---|---:|---|
+| E3 Ni maladie ni stress | 5 | couverture du sol, comparaison de capteurs, arbres brûlés, pannes d'irrigation, perte de surface d'oliveraie |
+| E4 Pas de télédétection aérienne | 5 | caméra thermique portative, photos de feuilles (3), spectres de feuilles en laboratoire |
+| E5 Pas de modèle appris | 5 | IA utilisée seulement pour la super-résolution, entropie ou seuils ROC (2), seuils CWSI/NDVI, SVM annoncé mais non entraîné |
 
-La raison détaillée de chaque exclusion figure dans le Lab 6 (Table 6 de l'article).
+Deux pièges rencontrés et corrigés, que les contrôles ont révélés :
+- un rapport exclu n'a **pas de DOI** (Navrozidis 2020, CEUR). Un `=COUNTA` sur la colonne DOI comptait 14 au lieu de 15. Le comptage porte donc sur la colonne Record, toujours remplie, et la case DOI indique « sans DOI » ;
+- pour le rapport 23, le tableau de tri contenait la note du tri titre/résumé au lieu du motif final. Le motif documenté dans le manuscrit (pannes du système d'irrigation, sans mesure de stress) est repris depuis `data/commentaires_texte_integral.csv`.
 
-## 10. Nombre final d'études incluses et contrôles
+## 11. Calcul du nombre final d'études incluses
 
-```python
-identifies, doublons = 215, 72
-exclus_titre, non_retrouves, exclus_texte = 90, 15, 15
+**23 rapports − 1 rapport décrivant une étude déjà comptée = 22 études.**
 
-examines = identifies - doublons              # 143
-recherches = examines - exclus_titre          # 53
-evalues = recherches - non_retrouves          # 38
-rapports_inclus = evalues - exclus_texte      # 23
-etudes = rapports_inclus - 1                  # 22 (un rapport en double pour une étude)
+Checklist de cohérence du lab (feuille **Vérification**, bas de page, et `output/06_controles.csv`) : toutes les lignes sont « OK ».
 
-assert (examines, recherches, evalues, rapports_inclus, etudes) == (143, 53, 38, 23, 22)
-```
+| Contrôle | Valeur |
+|---|---|
+| Identifiées = somme des bases | 215 = 118 + 97 |
+| Identifiées = doublons + examinées | 215 = 72 + 143 |
+| Recherchés = examinées − exclues | 53 = 143 − 90 |
+| Évalués = recherchés − non récupérés | 38 = 53 − 15 |
+| Rapports inclus = évalués − exclusions | 23 = 38 − 15 |
+| Exclusions titre/résumé = somme des motifs | 90 = 36 + 17 + 14 + 12 + 11 |
+| Exclusions texte intégral = somme des motifs | 15 = 5 + 5 + 5 |
+| Études ≤ rapports | 22 ≤ 23 |
 
-Checklist de cohérence :
-- 215 = 72 + 143 ✔
-- 143 = 90 + 53 ✔
-- 53 = 15 + 38 ✔
-- 38 = 15 + 23 ✔
-- 23 rapports = 22 études (une étude décrite dans deux rapports) ✔
+## 12. Création du diagramme PRISMA 2020
 
-## 11. Diagramme PRISMA 2020
+**Outil officiel.** L'outil en ligne lié depuis prisma-statement.org est l'application Shiny du package R PRISMA2020 (https://estech.shinyapps.io/prisma_flowdiagram/). `output/07_PRISMA_officiel.csv` est le **modèle CSV de cet outil, rempli avec nos nombres** : même structure ligne par ligne que le modèle d'origine, et motifs d'exclusion au format attendu (`Motif, n; Motif, n`). Pour obtenir le diagramme officiel :
+1. ouvrir l'application ;
+2. charger `output/07_PRISMA_officiel.csv` dans la zone d'import du fichier CSV ;
+3. vérifier les cases, puis télécharger le diagramme en PNG, SVG ou PDF.
 
-Valeurs à saisir dans chaque case (outil en ligne officiel PRISMA 2020 ou tout outil de dessin, en respectant la même structure) :
+**Diagramme du dépôt.** `output/08_prisma2020_flow.svg` (et `.png`) est généré par le script à partir des mêmes nombres, avec la structure du modèle officiel :
+- bandeaux Identification, Screening et Included ;
+- case Records removed before screening (doublons, outils automatiques, autres raisons) ;
+- motifs détaillés des exclusions ;
+- études et rapports inclus séparés.
 
-```
-IDENTIFICATION
-  Records identifiés dans les bases (n = 215)
-     Scopus (n = 118) ; Web of Science Core Collection (n = 97)
-  Records supprimés avant screening : doublons (n = 72 ; 70 par DOI, 2 par titre normalisé)
-          ↓
-SCREENING
-  Records évalués sur titre et résumé (n = 143)      →  Records exclus (n = 90)
-                                                           E2 autre culture/hors sujet (n = 36)
-                                                           E3 pas de cible maladie/stress (n = 17)
-                                                           E7 livre/chapitre/front matter (n = 14)
-                                                           E4 pas de capteur aérien/satellite (n = 12)
-                                                           E6 revue/éditorial (n = 11)
-          ↓
-  Rapports recherchés (n = 53)                       →  Rapports non retrouvés (n = 15)
-                                                           (décision au 1er stade : inclure 11, incertain 4)
-          ↓
-  Rapports évalués pour l'éligibilité (n = 38)       →  Rapports exclus (n = 15)
-                                                           E3 (n = 5) ; E4 (n = 5) ; E5 (n = 5)
-          ↓
-INCLUSION
-  Études incluses dans la revue (n = 22)
-  Rapports des études incluses (n = 23)
-```
+Il est en anglais pour le manuscrit, et en français dans `08_prisma2020_flow_fr.svg/.png`. Le texte est vectoriel et noir sur blanc, donc lisible à l'impression en noir et blanc.
 
-La version graphique est la **Figure 2** de l'article. Cases utilisées : « Records identified from databases », « Records removed before screening », « Records screened », « Records excluded », « Reports sought for retrieval », « Reports not retrieved », « Reports assessed for eligibility », « Reports excluded », « Studies included », « Reports of included studies ». Aucune case « autres sources » n'est utilisée : la littérature grise et les listes de références n'ont pas été recherchées.
+## 13. Vérification, questions et défis
 
-## 12. Vérification, questions et défis
+Réponses détaillées : [`verifications.txt`](verifications.txt). Calculs : feuille **Défis** du classeur.
 
-**Q1. 1200 références identifiées et 300 doublons : combien examinées ?**
-1200 − 300 = **900**.
+- **Q1.** 1200 − 300 = **900** références examinées.
+- **Q2.** 250 − 20 = **230** textes évalués. Les 400 exclusions au screening sont déjà retirées avant les 250 recherchés.
+- **Q3.** Chaque enregistrement doit être compté une fois et une seule. Si les sorties d'une case ne tombent pas juste, des références ont été perdues ou comptées deux fois, et le lecteur ne peut plus vérifier qu'aucune étude n'a été écartée sans raison.
 
-**Q2. 400 exclues au screening, 250 textes recherchés dont 20 non récupérés : combien évalués ?**
-Hypothèse : les 250 sont les textes recherchés (la phrase est ambiguë). 250 − 20 = **230** textes évalués. Le chiffre de 400 exclues n'influence pas ce calcul : il sert à déterminer les 250 recherchés (références examinées − 400).
+**Défi 1, tableau incohérent** (`check_flow`, feuille Défis, `output/10_defi1_corrections.csv`) :
 
-**Q3. Pourquoi les flèches doivent-elles être cohérentes ?**
-Chaque nombre d'une case doit être égal au nombre de la case précédente moins ce qui sort sur le côté. Sinon des références « disparaissent » ou sont comptées deux fois, ce qui rend le flux invérifiable et remet en cause la transparence et la reproductibilité.
+| Ligne | Saisi | Corrigé | Raison |
+|---|---:|---:|---|
+| Références examinées | 800 | **750** | 950 − 200 |
+| Textes recherchés | 300 | **250** | 750 − 500 |
+| Textes évalués | 240 | 240 | juste (250 − 10) |
+| Exclusions avec motifs | 180 | **175** | somme des motifs : 95 + 50 + 30 |
+| Études incluses | 70 | **65** | 240 − 175 |
 
-**Défi 1 : corriger un tableau incohérent.**
-Pour 950 identifiées et 200 doublons, les références examinées doivent être 950 − 200 = **750**, et non 800 (erreur de 50). À partir de là, chaque ligne suivante doit être recalculée avec la même règle (recherchés = examinés − exclus titre/résumé, évalués = recherchés − non récupérés, inclus = évalués − exclusions).
+**Défi 2, nombres bruts 850, 150, 500, 120, 380, 15, 365, 130, 235** : la chaîne 500 → 380 → 365 → 235 est juste, mais 850 − 150 = 700 ≠ 500. **200 enregistrements disparaissent avant le screening.** Le diagramme `output/11_defi2_prisma.png` les place dans la case « retirés pour d'autres raisons » et le signale dans son titre. L'autre lecture possible est un nombre de doublons faux (350 au lieu de 150). Sans la source, il faut signaler l'écart, pas l'effacer.
 
-**Défi 2 : diagramme à partir des nombres 850, 150, 500, 120, 380, 15, 365, 130, 235.**
-- 380 = 500 − 120 ; 365 = 380 − 15 ; 235 = 365 − 130 : la suite **500 → 120 → 380 → 15 → 365 → 130 → 235** est cohérente (500 examinés, 120 exclus au titre/résumé, 380 recherchés, 15 non récupérés, 365 évalués, 130 exclus, 235 inclus).
-- En revanche 850 − 150 = 700, et non 500 : **200 références ne sont pas expliquées** entre la déduplication et le screening. Il faut soit trouver l'étape manquante, soit corriger les nombres. Ce point doit être signalé et justifié dans le rendu.
+## 14. Résumé et conclusion
 
-## 13. Résumé
+Le diagramme de la revue est entièrement recalculé à partir des décisions enregistrées, et contrôlé deux fois : par les formules de l'énoncé et par des comptages indépendants. Les contrôles ont détecté deux erreurs réelles pendant la construction : un COUNTA faussé par un DOI manquant, et un motif d'exclusion mal recopié. Toutes deux ont été corrigées.
 
-215 records identifiés (Scopus 118, WoS 97), 72 doublons supprimés, 143 évalués sur titre et résumé, 90 exclus, 53 rapports recherchés, 15 non retrouvés, 38 évalués en texte intégral, 15 exclus avec motifs (E3, E4, E5 à 5 chacun), soit **23 rapports et 22 études incluses**. Toutes les relations arithmétiques sont vérifiées et le diagramme est la Figure 2 de l'article.
+Ce que montre le travail :
+1. **la distinction records / reports / studies change le résultat** : 23 rapports, mais 22 études ;
+2. **un texte non récupéré n'est pas une exclusion** : il a sa propre case ;
+3. **un contrôle arithmétique ne suffit pas** à garantir les nombres. Le diagramme de la SLR est cohérent, mais le Lab 5 a montré qu'une référence avait disparu à la déduplication, une erreur qu'aucune somme ne pouvait révéler. Seule la traçabilité jusqu'aux exports bruts l'a rendue visible.
+
+Prochaines étapes : générer la version officielle du diagramme avec l'application en ligne à partir de `07_PRISMA_officiel.csv`, puis l'intégrer au manuscrit ; décider du sort de la communication Blekos 2020 et mettre à jour le diagramme si elle est réintégrée.
+
+## Références
+
+- Page MJ et al. (2021). The PRISMA 2020 statement: an updated guideline for reporting systematic reviews. *BMJ* 372:n71.
+- Haddaway NR, Page MJ, Pritchard CC, McGuinness LA (2022). PRISMA2020: An R package and Shiny app for producing PRISMA 2020-compliant flow diagrams. *Campbell Systematic Reviews* 18:e1230.

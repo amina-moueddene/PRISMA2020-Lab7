@@ -1,0 +1,7 @@
+﻿Etape,Unite,Nombre,Definition
+Identification,records,215,notices brutes exportées des bases (une par base)
+Après déduplication,records,143,notices uniques soumises au tri titre/résumé
+Recherche du texte intégral,reports,53,documents complets recherchés (1 notice = 1 rapport ici)
+Évaluation de l'éligibilité,reports,38,documents complets lus
+Inclusion,reports,23,documents complets retenus
+Inclusion,studies,22,études distinctes (Kallel 2022 et Makhloufi 2022 = une étude)

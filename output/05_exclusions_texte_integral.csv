@@ -1,0 +1,16 @@
+﻿Record_SLR,DOI,Premier_auteur,Annee,Code,Motif,Commentaire
+15,10.15835/nbha49112139,Beyaz,2021,E4,Pas de télédétection aérienne ou satellitaire,"Handheld thermal camera (Testo 871) on the ground, no aerial imagery"
+23,10.3920/978-90-8686-916-9_40,Kalo,2021,E3,Ni maladie ni stress,"Detection of irrigation-system leaks and clogs; reference data were scouted malfunctions, with no measurement of plant stress"
+27,10.1145/3503823.3503851,Panagiotopoulou,2021,E5,Pas de modèle appris,AI used only for super-resolution; stress inferred from an index (CRI2) without a learning model or ground truth
+40,10.1117/12.2685462,Cilli,2023,E3,Ni maladie ni stress,"Land-cover classification (olive groves, vineyards…), no disease or stress target"
+58,10.3390/rs16071242,Telesca,2024,E5,Pas de modèle appris,"Fisher-Shannon + ROC on MODIS, no AI/ML method"
+59,10.3390/rs16234531,Vasilakos,2024,E3,Ni maladie ni stress,"Fire damage, neither disease nor water stress (borderline)"
+61,10.3390/app152011171,Alfonso,2025,E3,Ni maladie ni stress,"Comparison of UAV/satellite sensors using indices, no disease/stress detection"
+62,10.1016/j.aej.2025.09.059,Alrashdi,2025,E4,Pas de télédétection aérienne ou satellitaire,"Leaf photographs (4 leaf classes), no aerial imagery"
+81,10.3390/app16157669,Abu-Hammour,2026,E4,Pas de télédétection aérienne ou satellitaire,"Leaf photographs (public dataset) + environmental data, no aerial or satellite imagery of the tree"
+87,10.1371/journal.pone.0323158,Estrada,2026,E4,Pas de télédétection aérienne ou satellitaire,"Laboratory leaf spectra (dehydration), no aerial imagery"
+95,10.3390/rs18203527,Quille-Mamani,2026,E5,Pas de modèle appris,"Olive water stress (Landsat, METRIC/CWSI vs NDVI) but fixed thresholds, no AI/ML method"
+97,10.1016/j.physa.2026.131479,Telesca,2026,E5,Pas de modèle appris,"Entropy/complexity + ROC, no AI/ML method"
+101,sans DOI,Navrozidis,2020,E5,Pas de modèle appris,Vegetation indices only; the SVM model is planned but not implemented
+112,10.15439/2023F4794,Bruno,2023,E4,Pas de télédétection aérienne ou satellitaire,"Public dataset of leaf photographs (smartphone), no aerial imagery"
+121,10.1109/IRASET60544.2024.10548349,Majikumna,2024,E3,Ni maladie ni stress,Olive / other classification for area loss; no stress or disease variable

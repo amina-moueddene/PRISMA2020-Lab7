@@ -1,0 +1,11 @@
+﻿Etape,Nombre,Calcul
+Références identifiées,215,somme des bases
+Doublons supprimés,72,identifiées − examinées
+Références examinées,143,notices uniques
+Références exclues (titre/résumé),90,décision au tri titre/résumé
+Textes intégraux recherchés,53,examinées − exclues
+Textes non récupérés,15,recherchés sans texte intégral
+Textes intégraux évalués,38,recherchés − non récupérés
+Exclusions avec motifs,15,décision sur texte intégral
+Rapports inclus,23,évalués − exclus
+Études incluses,22,rapports regroupés par étude

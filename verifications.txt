@@ -1,0 +1,69 @@
+LAB 7 - Vérification : questions et défis
+Revue : Machine learning and remote sensing for disease and stress detection in olive
+(Calculs dans output/09_verification_prisma.xlsx, feuille « Défis », et dans scripts/prisma_flow.py ; vérifiés par tests/.)
+
+------------------------------------------------------------------------
+QUESTION 1. 1200 références identifiées, 300 doublons : références examinées ?
+
+Références examinées = identifiées − doublons = 1200 − 300 = 900.
+
+------------------------------------------------------------------------
+QUESTION 2. 400 exclues au screening ; 250 textes intégraux recherchés, dont 20 non récupérés :
+textes intégraux évalués ?
+
+Textes évalués = textes recherchés − non récupérés = 250 − 20 = 230.
+Les 400 exclusions au screening ne changent pas le calcul : elles sont déjà retirées avant d'arriver
+aux 250 textes recherchés (cela suppose 650 références examinées, car 650 − 400 = 250).
+
+------------------------------------------------------------------------
+QUESTION 3. Pourquoi les nombres qui sortent d'une case doivent-ils égaler ceux de la case suivante ?
+
+Parce que chaque référence doit être comptée une fois et une seule. Ce qui entre dans une case
+ressort soit vers la case suivante, soit vers une case d'exclusion. Si la somme ne tombe pas juste,
+des références ont été perdues ou comptées deux fois, et un lecteur ne peut plus vérifier qu'aucune
+étude n'a été écartée sans raison. C'est aussi le premier contrôle fait par les relecteurs.
+
+Exemple réel : au Lab 6, une référence « en attente » (U012) cassait la chaîne : 54 − 15 = 39, mais
+38 rapports évalués. Ce diagramme reprend les chiffres de la SLR (143 références), où la chaîne est
+juste à chaque étape : 215 = 72 + 143 ; 143 − 90 = 53 ; 53 − 15 = 38 ; 38 − 15 = 23 rapports
+(22 études).
+
+------------------------------------------------------------------------
+DÉFI 1. Tableau avec incohérences
+
+Tableau reçu : identifiées 950 ; doublons 200 ; examinées 800 ; exclues titre/résumé 500 ;
+recherchées 300 ; non récupérées 10 ; évaluées 240 ; exclusions avec motifs 180 (motifs : population
+95, design 50, langue 30) ; incluses 70.
+
+Méthode : les valeurs saisies (identifiées, doublons, exclusions, non récupérées, motifs) sont tenues
+pour justes ; chaque valeur calculée est refaite dans l'ordre du diagramme (scripts/prisma_flow.py,
+fonction check_flow ; feuille Défis du classeur, colonne « Correction »).
+
+  Examinées       800 -> 750   (950 − 200)
+  Recherchées     300 -> 250   (750 − 500)
+  Évaluées        240    OK    (250 − 10) : la valeur saisie était juste
+  Exclusions      180 -> 175   (95 + 50 + 30 : le total ne correspond pas à la somme des motifs)
+  Incluses         70 -> 65    (240 − 175)
+
+Dans un cas réel, il faudrait vérifier dans le tableau des exclusions si 5 exclusions n'ont pas de
+motif ; si c'est le cas, les ajouter. On ne corrige pas un total sans vérifier les lignes qui le
+composent.
+
+------------------------------------------------------------------------
+DÉFI 2. Nombres bruts 850, 150, 500, 120, 380, 15, 365, 130, 235
+
+Lecture dans l'ordre du diagramme :
+  identifiées 850 ; doublons 150 ; examinées 500 ; exclues titre/résumé 120 ;
+  recherchés 380 (= 500 − 120) ; non récupérés 15 ; évalués 365 (= 380 − 15) ;
+  exclus avec motifs 130 ; inclus 235 (= 365 − 130).
+Les quatre dernières égalités sont justes. En revanche, 850 − 150 = 700 et non 500 : 200
+enregistrements disparaissent avant le screening sans explication.
+
+Deux corrections possibles :
+  (a) 200 enregistrements ont été retirés pour une autre raison (outil automatique, hors période,
+      etc.). PRISMA 2020 a une case prévue pour cela (« Records removed for other reasons »), mais
+      la raison doit être documentée ;
+  (b) le nombre de doublons est faux et vaut 350.
+Le diagramme output/11_defi2_prisma.png est construit avec la lecture (a), signalée dans son titre.
+Sans information supplémentaire, on ne peut pas choisir entre (a) et (b) : la bonne réponse est de
+signaler l'écart et de demander la source.

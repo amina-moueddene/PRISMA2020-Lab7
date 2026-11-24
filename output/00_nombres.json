@@ -1,0 +1,28 @@
+{
+ "identifies_par_base": {
+  "Scopus": 118,
+  "Web of Science Core Collection": 97
+ },
+ "identifies": 215,
+ "doublons": 72,
+ "examines": 143,
+ "exclus_titre_resume": 90,
+ "exclus_titre_resume_par_motif": {
+  "E2": 36,
+  "E3": 17,
+  "E4": 12,
+  "E6": 11,
+  "E7": 14
+ },
+ "recherches": 53,
+ "non_recuperes": 15,
+ "evalues": 38,
+ "exclus_texte_integral": 15,
+ "exclus_texte_integral_par_motif": {
+  "E3": 5,
+  "E4": 5,
+  "E5": 5
+ },
+ "rapports_inclus": 23,
+ "etudes_incluses": 22
+}

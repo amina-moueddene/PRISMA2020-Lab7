@@ -1,0 +1,9 @@
+﻿Controle,Valeur,Attendu,OK
+Identifiés = somme des bases,215,215,OK
+Identifiés = doublons + examinés,215,215,OK
+Recherchés = examinés − exclus titre/résumé,53,53,OK
+Évalués = recherchés − non récupérés,38,38,OK
+Rapports inclus = évalués − exclus texte intégral,23,23,OK
+Exclus titre/résumé = somme des motifs,90,90,OK
+Exclus texte intégral = somme des motifs,15,15,OK
+Études incluses ≤ rapports inclus,True,True,OK
