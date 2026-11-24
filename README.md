@@ -9,7 +9,7 @@
 
 ## En bref
 
-**Technologies.** **Python 3** (bibliothèque standard + openpyxl) et un **classeur Excel avec de vraies formules** (`=SUM`, `=COUNTA`, `=COUNTIF`, `=COUNTIFS`, `=IF`, `=IFERROR`). Le diagramme est écrit en **SVG** et suit la structure du modèle officiel PRISMA 2020. Un fichier CSV est fourni au format du **modèle officiel** (package R PRISMA2020 / application en ligne), prêt à être importé. Le lab ne demande pas de SQL.
+**Technologies.** **Python 3** (bibliothèque standard + openpyxl), **SQL standard** (`sql/prisma_verification.sql` pour le contrôle relationnel des tables et vues PRISMA) et un **classeur Excel avec de vraies formules** (`=SUM`, `=COUNTA`, `=COUNTIF`, `=COUNTIFS`, `=IF`, `=IFERROR`). Le diagramme est écrit en **SVG/PNG** et suit la structure du modèle officiel PRISMA 2020. Un fichier CSV est fourni au format du **modèle officiel** (package R PRISMA2020 / application en ligne), prêt à être importé.
 
 **Aucun nombre n'est saisi à la main**, sauf les nombres de départ par base. Tous les autres sont recalculés à partir du tableau de tri de la revue (une ligne par enregistrement unique, avec sa décision), puis contrôlés deux fois : par les formules de l'énoncé et par un comptage indépendant.
 
@@ -38,7 +38,7 @@
 pip install -r requirements.txt
 python scripts/prisma_flow.py                   # nombres, contrôles, CSV de l'outil officiel, diagramme SVG
 python scripts/build_workbook.py                # classeur Excel (recalculé par LibreOffice s'il est installé)
-python -m unittest discover -s tests -t . -v    # 18 tests
+python -m unittest discover -s tests -t . -v    # 20 tests (flux, classeur Excel et vérification SQL)
 ```
 
 `prisma_flow.py` s'arrête avec une erreur si un seul contrôle échoue. La conversion SVG → PNG utilise `rsvg-convert` s'il est installé.
@@ -60,8 +60,9 @@ python -m unittest discover -s tests -t . -v    # 18 tests
 | `scripts/build_workbook.py` | Classeur Excel de vérification |
 | `output/` | Sorties numérotées dans l'ordre du lab (voir le tableau ci-dessus) |
 | `output/09_verification_prisma.xlsx` | Classeur : Identification, Vérification, Records_Reports_Studies, Tri, Exclusions, Liens_rapports_études, Motifs, Exemple_énoncé, Défis |
+| `sql/prisma_verification.sql` | Script SQL complet (tables, vues `v_verification_prisma` / `v_controles_coherence`, Défi 1) |
 | `verifications.txt` | Réponses aux 3 questions et aux 2 défis |
-| `tests/` | 18 tests automatiques |
+| `tests/` | 20 tests automatiques (flux Python, classeur Excel et requêtes SQL) |
 
 ---
 
